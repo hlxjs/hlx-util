@@ -30,7 +30,7 @@ function createUrl(url, base = '') {
       return new URL(url, base);
     },
     () => {
-      return new URL(`file://${path.join(base, url)}`);
+      return new URL(`file://${path.join(base ? path.dirname(base) : '', url)}`);
     }
   );
 }
