@@ -1,7 +1,7 @@
 {
   "name": "hlx-util",
   "version": "0.0.1",
-  "description": "A library to preserve the functions commonly used in hlx objects",
+  "description": "A library to preserve functions commonly used in hlxjs project",
   "main": "index.js",
   "directories": {
     "test": "test"

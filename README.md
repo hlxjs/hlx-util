@@ -5,27 +5,7 @@
 [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
 
 # hlx-util
-A library to preserve the functions commonly used in hlx objects
+A library to preserve functions commonly used in hlxjs project
 
 ## Install
 [![NPM](https://nodei.co/npm/hlx-util.png?mini=true)](https://nodei.co/npm/hlx-util/)
-
-## API
-
-### `createWriteStream(options)`
-Creates a new `TransformStream` object.
-
-#### params
-| Name    | Type   | Required | Default | Description   |
-| ------- | ------ | -------- | ------- | ------------- |
-| options | object | Yes       | N/A      | See below     |
-
-#### options
-| Name        | Type   | Default | Description                       |
-| ----------- | ------ | ------- | --------------------------------- |
-| endpoint | string | N/A     | URL of the destination (webdav server endpoint) |
-| rootPath | string | The path included in `url` | Will be used when the playlist contains relative urls |
-| agent | http.Agent | undefined | Proxy agent |
-
-#### return value
-An instance of `TransformStream`.
