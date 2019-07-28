@@ -1,5 +1,8 @@
 const {URL} = require('url');
 const path = require('path');
+const fs = require('fs');
+
+const {getDateString, getDateTimeString} = require('./date');
 
 function THROW(err) {
   throw err;
@@ -63,17 +66,19 @@ function getUrlType(url) {
   return 'path-relative';
 }
 
-function getDateString(date) {
-  return `${date.getUTCFullYear()}-${('00' + (date.getUTCMonth() + 1)).slice(-2)}-${('00' + date.getUTCDate()).slice(-2)}`;
-}
-
-function getTimeString(date) {
-  return `${('00' + date.getUTCHours()).slice(-2)}:${('00' + date.getUTCMinutes()).slice(-2)}:${('00' + date.getUTCSeconds()).slice(-2)}`;
-}
-
-function getDateTimeString() {
-  const date = new Date();
-  return `${getDateString(date)} ${getTimeString(date)}`;
+function mkdirP(dir) {
+  if (fs.existsSync(dir) && fs.lstatSync(dir).isDirectory()) {
+    return;
+  }
+  tryCatch(
+    () => {
+      fs.mkdirSync(dir, {recursive: true});
+    },
+    () => {
+      mkdirP(path.resolve(dir, '..'));
+      fs.mkdirSync(dir);
+    }
+  );
 }
 
 module.exports = {
@@ -83,5 +88,6 @@ module.exports = {
   getPathFromUrl,
   getUrlType,
   getDateString,
-  getDateTimeString
+  getDateTimeString,
+  mkdirP
 };
