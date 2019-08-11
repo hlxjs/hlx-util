@@ -150,20 +150,32 @@ test('utils.buildUrlObj', t => {
 
 test('utils.buildLocalPath', t => {
   let localPath;
-  localPath = utils.buildLocalPath('/path/to/file', '', '/path/to/inputDir', '/path/to/outputDir');
+  localPath = utils.buildLocalPath('/path/to/file?foo=bar#hash', '', '/path/to/inputDir', '/path/to/outputDir');
   t.is(localPath, '/path/to/outputDir/path/to/file');
   localPath = utils.buildLocalPath('http://example.com/path/to/file?foo=bar#hash', '', '/path/to/inputDir', '/path/to/outputDir');
   t.is(localPath, '/path/to/outputDir/example.com/path/to/file');
-  localPath = utils.buildLocalPath('file:///path/to/inputDir/subdir/file', '', '/path/to/inputDir', '/path/to/outputDir');
+  localPath = utils.buildLocalPath('file:///path/to/inputDir/subdir/file?foo=bar#hash', '', '/path/to/inputDir', '/path/to/outputDir');
   t.is(localPath, '/path/to/outputDir/subdir/file');
   localPath = utils.buildLocalPath('http://example2.com/path/to/file?foo=bar#hash', 'http://example.com/path/to/file', '/path/to/inputDir', '/path/to/outputDir');
   t.is(localPath, '/path/to/outputDir/example2.com/path/to/file');
-  localPath = utils.buildLocalPath('file:///path/to/inputDir/subdir2/file', 'file:///path/to/inputDir/subdir/file', '/path/to/inputDir', '/path/to/outputDir');
+  localPath = utils.buildLocalPath('file:///path/to/inputDir/subdir2/file?foo=bar#hash', 'file:///path/to/inputDir/subdir/file', '/path/to/inputDir', '/path/to/outputDir');
   t.is(localPath, '/path/to/outputDir/subdir2/file');
   localPath = utils.buildLocalPath('../../path2/to/file?foo=bar#hash', 'http://example.com/path/to/file', '/path/to/inputDir', '/path/to/outputDir');
   t.is(localPath, '/path/to/outputDir/example.com/path2/to/file');
-  localPath = utils.buildLocalPath('../subdir2/file', 'file:///path/to/inputDir/subdir/file', '/path/to/inputDir', '/path/to/outputDir');
+  localPath = utils.buildLocalPath('../subdir2/file?foo=bar#hash', 'file:///path/to/inputDir/subdir/file', '/path/to/inputDir', '/path/to/outputDir');
   t.is(localPath, '/path/to/outputDir/subdir2/file');
-  localPath = utils.buildLocalPath('../subdir2/file', '/path/to/inputDir/subdir/file', '/path/to/inputDir', '/path/to/outputDir');
+  localPath = utils.buildLocalPath('../subdir2/file?foo=bar#hash', '/path/to/inputDir/subdir/file', '/path/to/inputDir', '/path/to/outputDir');
   t.is(localPath, '/path/to/outputDir/subdir2/file');
+});
+
+test('utils.removeQueryString', t => {
+  let result;
+  result = utils.removeQueryString('/path/to/file?foo=bar');
+  t.is(result, '/path/to/file');
+  result = utils.removeQueryString('/path/to/file?foo=bar&abc=def');
+  t.is(result, '/path/to/file');
+  result = utils.removeQueryString('/path/to/file#hash');
+  t.is(result, '/path/to/file');
+  result = utils.removeQueryString('/path/to/file?foo=bar&abc=def#hash');
+  t.is(result, '/path/to/file');
 });
