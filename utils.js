@@ -107,6 +107,11 @@ function buildAbsolutePath(relativePath, basePath, inputDir, outputDir) {
   return path.join(outputDir, fullPath.startsWith(inputDir) ? path.relative(inputDir, fullPath) : fullPath);
 }
 
+function removeQueryString(absolutePath) {
+  const obj = buildUrlObj(`file://${absolutePath}`);
+  return obj.pathname;
+}
+
 function buildLocalPath(uri, parentUri, inputDir, outputDir) {
   print(`buildLocalPath: uri=${uri}, parentUri=${parentUri}, inputDir=${inputDir}, outputDir=${outputDir}`);
   let localPath;
@@ -114,7 +119,7 @@ function buildLocalPath(uri, parentUri, inputDir, outputDir) {
   if (path.isAbsolute(uri)) {
     localPath = path.join(outputDir, uri);
     print(`\tFrom absolute path to localPath: ${localPath}`);
-    return localPath;
+    return removeQueryString(localPath);
   }
   obj = buildUrlObj(uri);
   if (obj) {
@@ -131,7 +136,7 @@ function buildLocalPath(uri, parentUri, inputDir, outputDir) {
   }
   localPath = buildAbsolutePath(uri, parentUri, inputDir, outputDir);
   print(`\tFrom relative path to localPath: ${localPath}`);
-  return localPath;
+  return removeQueryString(localPath);
 }
 
 module.exports = {
@@ -144,5 +149,6 @@ module.exports = {
   getDateTimeString,
   mkdirP,
   buildUrlObj,
+  removeQueryString,
   buildLocalPath
 };
