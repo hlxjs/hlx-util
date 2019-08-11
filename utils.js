@@ -81,6 +81,25 @@ function mkdirP(dir) {
   );
 }
 
+function buildLocalPathFromUrl(url, inputDir, outputDir) {
+  const obj = tryCatch(
+    () => new URL(url),
+    () => null
+  );
+
+  if (!obj) {
+    return '';
+  }
+
+  obj.search = '';
+  obj.hash = '';
+
+  if (obj.protocol === 'file:') {
+    return path.join(outputDir, path.relative(inputDir, obj.pathname));
+  }
+  return path.join(outputDir, obj.hostname, obj.pathname);
+}
+
 module.exports = {
   THROW: process.env.NODE_ENV === 'production' ? logError : THROW,
   tryCatch,
@@ -89,5 +108,6 @@ module.exports = {
   getUrlType,
   getDateString,
   getDateTimeString,
-  mkdirP
+  mkdirP,
+  buildLocalPathFromUrl
 };
