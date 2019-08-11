@@ -135,3 +135,13 @@ test('utils.mkdirP', t => {
   t.falsy(spy.exceptions[5]);
   t.falsy(spy.exceptions[6]);
 });
+
+test('utils.buildLocalPathFromUrl', t => {
+  let localPath;
+  localPath = utils.buildLocalPathFromUrl('http://example.com/path/to/file?foo=bar#hash', '/path/to/inputDir', '/path/to/outputDir');
+  t.is(localPath, '/path/to/outputDir/example.com/path/to/file');
+  localPath = utils.buildLocalPathFromUrl('file:///path/to/inputDir/subdir/file', '/path/to/inputDir', '/path/to/outputDir');
+  t.is(localPath, '/path/to/outputDir/subdir/file');
+  localPath = utils.buildLocalPathFromUrl('/path/to/inputDir/subdir/file', '/path/to/inputDir', '/path/to/outputDir');
+  t.is(localPath, '');
+});
