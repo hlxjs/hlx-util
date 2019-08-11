@@ -83,23 +83,21 @@ function mkdirP(dir) {
   );
 }
 
-function buildLocalPathFromUrl(url) {
+function buildUrlObj(url, base) {
   const obj = tryCatch(
     () => new URL(url),
+    () => new URL(url, base),
     () => null
   );
 
-  if (!obj) {
-    return '';
+  if (obj) {
+    obj.search = '';
+    obj.hash = '';
+    if (obj.hostname && !obj.pathname.startsWith(obj.hostname, 1)) {
+      obj.pathname = path.join('/', obj.hostname, obj.pathname);
+    }
   }
-
-  obj.search = '';
-  obj.hash = '';
-
-  if (obj.protocol === 'file:') {
-    return obj.pathname;
-  }
-  return path.join('/', obj.hostname, obj.pathname);
+  return obj;
 }
 
 function buildAbsolutePath(relativePath, basePath, inputDir, outputDir) {
@@ -112,20 +110,22 @@ function buildAbsolutePath(relativePath, basePath, inputDir, outputDir) {
 function buildLocalPath(uri, parentUri, inputDir, outputDir) {
   print(`buildLocalPath: uri=${uri}, parentUri=${parentUri}, inputDir=${inputDir}, outputDir=${outputDir}`);
   let localPath;
+  let obj;
   if (path.isAbsolute(uri)) {
     localPath = path.join(outputDir, uri);
     print(`\tFrom absolute path to localPath: ${localPath}`);
     return localPath;
   }
-  localPath = buildLocalPathFromUrl(uri);
-  if (localPath) {
-    localPath = buildAbsolutePath(localPath, '/', inputDir, outputDir);
+  obj = buildUrlObj(uri);
+  if (obj) {
+    localPath = buildAbsolutePath(obj.pathname, '/', inputDir, outputDir);
     print(`\tFrom absolute url to localPath: ${localPath}`);
     return localPath;
   }
-  const basePath = buildLocalPathFromUrl(parentUri);
-  if (basePath) {
-    localPath = buildAbsolutePath(uri, basePath, inputDir, outputDir);
+  obj = buildUrlObj(parentUri);
+  if (obj) {
+    obj = buildUrlObj(uri, obj.href);
+    localPath = buildAbsolutePath(obj.pathname, '/', inputDir, outputDir);
     print(`\tFrom relative url to localPath: ${localPath}`);
     return localPath;
   }
@@ -143,6 +143,6 @@ module.exports = {
   getDateString,
   getDateTimeString,
   mkdirP,
-  buildLocalPathFromUrl,
+  buildUrlObj,
   buildLocalPath
 };
