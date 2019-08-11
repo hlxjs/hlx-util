@@ -1,7 +1,9 @@
 const {URL} = require('url');
 const path = require('path');
 const fs = require('fs');
+const debug = require('debug');
 
+const print = debug('hlx-util');
 const {getDateString, getDateTimeString} = require('./date');
 
 function THROW(err) {
@@ -81,7 +83,7 @@ function mkdirP(dir) {
   );
 }
 
-function buildLocalPathFromUrl(url, inputDir, outputDir) {
+function buildLocalPathFromUrl(url) {
   const obj = tryCatch(
     () => new URL(url),
     () => null
@@ -95,9 +97,41 @@ function buildLocalPathFromUrl(url, inputDir, outputDir) {
   obj.hash = '';
 
   if (obj.protocol === 'file:') {
-    return path.join(outputDir, path.relative(inputDir, obj.pathname));
+    return obj.pathname;
   }
-  return path.join(outputDir, obj.hostname, obj.pathname);
+  return path.join('/', obj.hostname, obj.pathname);
+}
+
+function buildAbsolutePath(relativePath, basePath, inputDir, outputDir) {
+  print(`buildAbsolutePath: relativePath=${relativePath}, basePath=${basePath}, inputDir=${inputDir}, outputDir=${outputDir}`);
+  const fullPath = path.join(path.dirname(basePath), relativePath);
+  print(`\tfullPath=${fullPath}`);
+  return path.join(outputDir, fullPath.startsWith(inputDir) ? path.relative(inputDir, fullPath) : fullPath);
+}
+
+function buildLocalPath(uri, parentUri, inputDir, outputDir) {
+  print(`buildLocalPath: uri=${uri}, parentUri=${parentUri}, inputDir=${inputDir}, outputDir=${outputDir}`);
+  let localPath;
+  if (path.isAbsolute(uri)) {
+    localPath = path.join(outputDir, uri);
+    print(`\tFrom absolute path to localPath: ${localPath}`);
+    return localPath;
+  }
+  localPath = buildLocalPathFromUrl(uri);
+  if (localPath) {
+    localPath = buildAbsolutePath(localPath, '/', inputDir, outputDir);
+    print(`\tFrom absolute url to localPath: ${localPath}`);
+    return localPath;
+  }
+  const basePath = buildLocalPathFromUrl(parentUri);
+  if (basePath) {
+    localPath = buildAbsolutePath(uri, basePath, inputDir, outputDir);
+    print(`\tFrom relative url to localPath: ${localPath}`);
+    return localPath;
+  }
+  localPath = buildAbsolutePath(uri, parentUri, inputDir, outputDir);
+  print(`\tFrom relative path to localPath: ${localPath}`);
+  return localPath;
 }
 
 module.exports = {
@@ -109,5 +143,6 @@ module.exports = {
   getDateString,
   getDateTimeString,
   mkdirP,
-  buildLocalPathFromUrl
+  buildLocalPathFromUrl,
+  buildLocalPath
 };
