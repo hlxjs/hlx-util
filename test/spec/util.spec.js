@@ -136,14 +136,16 @@ test('utils.mkdirP', t => {
   t.falsy(spy.exceptions[6]);
 });
 
-test('utils.buildLocalPathFromUrl', t => {
-  let localPath;
-  localPath = utils.buildLocalPathFromUrl('http://example.com/path/to/file?foo=bar#hash');
-  t.is(localPath, '/example.com/path/to/file');
-  localPath = utils.buildLocalPathFromUrl('file:///path/to/inputDir/subdir/file');
-  t.is(localPath, '/path/to/inputDir/subdir/file');
-  localPath = utils.buildLocalPathFromUrl('/path/to/inputDir/subdir/file');
-  t.is(localPath, '');
+test('utils.buildUrlObj', t => {
+  let obj;
+  obj = utils.buildUrlObj('http://example.com/path/to/file?foo=bar#hash');
+  t.is(obj.pathname, '/example.com/path/to/file');
+  obj = utils.buildUrlObj('file:///path/to/inputDir/subdir/file');
+  t.is(obj.pathname, '/path/to/inputDir/subdir/file');
+  obj = utils.buildUrlObj('../../path2/to/file?foo=bar#hash', 'http://example.com/path/to/file');
+  t.is(obj.pathname, '/example.com/path2/to/file');
+  obj = utils.buildUrlObj('/path/to/inputDir/subdir/file');
+  t.is(obj, null);
 });
 
 test('utils.buildLocalPath', t => {
@@ -154,11 +156,11 @@ test('utils.buildLocalPath', t => {
   t.is(localPath, '/path/to/outputDir/example.com/path/to/file');
   localPath = utils.buildLocalPath('file:///path/to/inputDir/subdir/file', '', '/path/to/inputDir', '/path/to/outputDir');
   t.is(localPath, '/path/to/outputDir/subdir/file');
-  localPath = utils.buildLocalPath('http://example2.com/path/to/file', 'http://example.com/path/to/file', '/path/to/inputDir', '/path/to/outputDir');
+  localPath = utils.buildLocalPath('http://example2.com/path/to/file?foo=bar#hash', 'http://example.com/path/to/file', '/path/to/inputDir', '/path/to/outputDir');
   t.is(localPath, '/path/to/outputDir/example2.com/path/to/file');
   localPath = utils.buildLocalPath('file:///path/to/inputDir/subdir2/file', 'file:///path/to/inputDir/subdir/file', '/path/to/inputDir', '/path/to/outputDir');
   t.is(localPath, '/path/to/outputDir/subdir2/file');
-  localPath = utils.buildLocalPath('../../path2/to/file', 'http://example.com/path/to/file', '/path/to/inputDir', '/path/to/outputDir');
+  localPath = utils.buildLocalPath('../../path2/to/file?foo=bar#hash', 'http://example.com/path/to/file', '/path/to/inputDir', '/path/to/outputDir');
   t.is(localPath, '/path/to/outputDir/example.com/path2/to/file');
   localPath = utils.buildLocalPath('../subdir2/file', 'file:///path/to/inputDir/subdir/file', '/path/to/inputDir', '/path/to/outputDir');
   t.is(localPath, '/path/to/outputDir/subdir2/file');
