@@ -139,7 +139,7 @@ test('utils.mkdirP', t => {
 test('utils.buildUrlObj', t => {
   let obj;
   obj = utils.buildUrlObj('http://example.com/path/to/file?foo=bar#hash');
-  t.is(obj.pathname, '/example.com/path/to/file');
+  t.is(obj.pathname, '/path/to/file');
   obj = utils.buildUrlObj('file:///path/to/inputDir/subdir/file');
   t.is(obj.pathname, '/path/to/inputDir/subdir/file');
   obj = utils.buildUrlObj('../../path2/to/file?foo=bar#hash', 'http://example.com/path/to/file');
@@ -153,7 +153,7 @@ test('utils.buildLocalPath', t => {
   localPath = utils.buildLocalPath('/path/to/file?foo=bar#hash', '', '/path/to/inputDir', '/path/to/outputDir');
   t.is(localPath, '/path/to/outputDir/path/to/file');
   localPath = utils.buildLocalPath('http://example.com/path/to/file?foo=bar#hash', '', '/path/to/inputDir', '/path/to/outputDir');
-  t.is(localPath, '/path/to/outputDir/example.com/path/to/file');
+  t.is(localPath, '/path/to/outputDir/path/to/file');
   localPath = utils.buildLocalPath('file:///path/to/inputDir/subdir/file?foo=bar#hash', '', '/path/to/inputDir', '/path/to/outputDir');
   t.is(localPath, '/path/to/outputDir/subdir/file');
   localPath = utils.buildLocalPath('http://example2.com/path/to/file?foo=bar#hash', 'http://example.com/path/to/file', '/path/to/inputDir', '/path/to/outputDir');
