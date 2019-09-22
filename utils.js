@@ -93,7 +93,7 @@ function buildUrlObj(url, base) {
   if (obj) {
     obj.search = '';
     obj.hash = '';
-    if (obj.hostname && !obj.pathname.startsWith(obj.hostname, 1)) {
+    if (obj.hostname && base && !obj.pathname.startsWith(obj.hostname, 1)) {
       obj.pathname = path.join('/', obj.hostname, obj.pathname);
     }
   }
@@ -115,23 +115,15 @@ function removeQueryString(absolutePath) {
 function buildLocalPath(uri, parentUri, inputDir, outputDir) {
   print(`buildLocalPath: uri=${uri}, parentUri=${parentUri}, inputDir=${inputDir}, outputDir=${outputDir}`);
   let localPath;
-  let obj;
   if (path.isAbsolute(uri)) {
     localPath = path.join(outputDir, uri);
     print(`\tFrom absolute path to localPath: ${localPath}`);
     return removeQueryString(localPath);
   }
-  obj = buildUrlObj(uri);
+  const obj = buildUrlObj(uri, parentUri);
   if (obj) {
     localPath = buildAbsolutePath(obj.pathname, '/', inputDir, outputDir);
     print(`\tFrom absolute url to localPath: ${localPath}`);
-    return localPath;
-  }
-  obj = buildUrlObj(parentUri);
-  if (obj) {
-    obj = buildUrlObj(uri, obj.href);
-    localPath = buildAbsolutePath(obj.pathname, '/', inputDir, outputDir);
-    print(`\tFrom relative url to localPath: ${localPath}`);
     return localPath;
   }
   localPath = buildAbsolutePath(uri, parentUri, inputDir, outputDir);
