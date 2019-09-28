@@ -93,7 +93,7 @@ function buildUrlObj(url, base) {
   if (obj) {
     obj.search = '';
     obj.hash = '';
-    if (obj.hostname && base && !obj.pathname.startsWith(obj.hostname, 1)) {
+    if (obj.hostname && !obj.pathname.startsWith(obj.hostname, 1)) {
       obj.pathname = path.join('/', obj.hostname, obj.pathname);
     }
   }
