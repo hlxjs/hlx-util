@@ -1,6 +1,6 @@
 {
   "name": "hlx-util",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "A library to preserve functions commonly used in hlxjs project",
   "main": "index.js",
   "directories": {
